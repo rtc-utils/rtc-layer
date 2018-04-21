@@ -1,0 +1,14 @@
+# import Chatroom from "./generated/prisma.graphql"
+# import Message from "./generated/prisma.graphql"
+
+type Query {
+  conferenceRooms: [ConferenceRoom]
+  conferenceRoom(id: ID!): ConferenceRoom
+  messages(conferenceRoomId: ID): [Message]
+  users(conferenceRoomId: ID): [User]
+  user(id: ID!, search: String): User
+}
+
+type Mutation {
+  addMessage(text: String!, userId: ID!, chatroomId: ID!): Message
+}
