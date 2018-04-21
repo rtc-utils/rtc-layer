@@ -1,9 +1,10 @@
 type ConferenceRoom {
   id: ID! @unique
   title: String!
-  users: [User!]!
+  participants: [User!]!
   messages: [Message!]!
   createdAt: DateTime!
+  createdBy: ID
 }
 
 type User {

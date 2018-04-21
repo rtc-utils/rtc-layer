@@ -54,6 +54,54 @@ export default function RoomConnector() {
 
         return context.db.mutation.createMessage({ data: update }, info);
       },
+      addUserToConference: async (parent, { userId, conferenceRoomId }, context, info) => {
+        const room = await context.db.query.conferenceRooms({
+          where: {
+            id: conferenceRoomId
+          }
+        }, info);
+
+        if (context.userId !== room.createdBy && context.userId !== userId) {
+          throw new Error("Only the room creator can add users other than themselves");
+        }
+
+        const result = await context.db.mutation.updateConferenceRoom({
+          data: {
+            users: {
+              connect: [{ id: userId }]
+            }
+          },
+          where: {
+            id: conferenceRoomId
+          }
+        }, info)
+
+        return true
+      },
+      removeUserFromConference: async (parent, { userId, conferenceRoomId }, context, info) => {
+        const room = await context.db.query.conferenceRooms({
+          where: {
+            id: conferenceRoomId
+          }
+        }, info);
+
+        if (context.userId !== room.createdBy && context.userId !== userId) {
+          throw new Error("Only the room creator can remove users other than themselves");
+        }
+
+        const result = await context.db.mutation.updateConferenceRoom({
+          data: {
+            users: {
+              disconnect: [{ id: userId }]
+            }
+          },
+          where: {
+            id: conferenceRoomId
+          }
+        }, info)
+
+        return true
+      },
       initializeConnectedUser: (parent, args, context, info) => {
         const userId = context && context.userId;
 
@@ -102,14 +150,9 @@ export default function RoomConnector() {
           {
             data: {
               title,
+              createdBy: userId,
               messages: messages,
-              users: {
-                connect: [
-                  {
-                    id: user.id
-                  }
-                ].concat(connectIds)
-              }
+              participants: users
             }
           },
           info

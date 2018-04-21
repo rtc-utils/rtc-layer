@@ -13,4 +13,6 @@ type Mutation {
   createUser(name: String!): User!
   initializeConnectedUser: Token
   createConferenceRoom(data: ConferenceRoomCreateInput!): ConferenceRoom!
+  addUserToConference(userId: ID!, conferenceRoomId: ID!): Boolean
+  removeUserFromConference(userId: ID!, conferenceRoomId: ID!): Boolean
 }
