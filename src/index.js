@@ -1,8 +1,9 @@
 import { GraphQLServer } from "graphql-yoga";
 import { Prisma } from "prisma-binding";
-
+import UserConnector from './connectors/userConnector';
 import TwilioConnector from "./connectors/twilioConnector";
 
+const User = UserConnector();
 const Twilio = TwilioConnector({});
 
 const resolvers = {
@@ -10,12 +11,12 @@ const resolvers = {
     conferenceRooms(parent, args, ctx, info) {},
     conferenceRoom(parent, args, ctx, info) {},
     messages(parent, { id }, ctx, info) {},
-    users(parent, args, ctx, info) {},
-    user(parent, args, ctx, info) {},
+    ...User.Query,
     ...Twilio.Query
   },
   Mutation: {
     addMessage(parent, args, ctx, info) {},
+    ...User.Mutation,
     ...Twilio.Mutation
   }
 };
@@ -29,6 +30,7 @@ function createContext(httpReq) {
       debug: true // log all GraphQL queryies & mutations
     }),
     userId: httpReq.request.headers && httpReq.request.headers.userid,
+    ...httpReq,
   };
 }
 
