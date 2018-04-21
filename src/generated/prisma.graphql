@@ -38,6 +38,10 @@ type AggregateMessage {
   count: Int!
 }
 
+type AggregateToken {
+  count: Int!
+}
+
 type AggregateUser {
   count: Int!
 }
@@ -582,21 +586,27 @@ type Mutation {
   createConferenceRoom(data: ConferenceRoomCreateInput!): ConferenceRoom!
   createUser(data: UserCreateInput!): User!
   createMessage(data: MessageCreateInput!): Message!
+  createToken(data: TokenCreateInput!): Token!
   updateConferenceRoom(data: ConferenceRoomUpdateInput!, where: ConferenceRoomWhereUniqueInput!): ConferenceRoom
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateMessage(data: MessageUpdateInput!, where: MessageWhereUniqueInput!): Message
+  updateToken(data: TokenUpdateInput!, where: TokenWhereUniqueInput!): Token
   deleteConferenceRoom(where: ConferenceRoomWhereUniqueInput!): ConferenceRoom
   deleteUser(where: UserWhereUniqueInput!): User
   deleteMessage(where: MessageWhereUniqueInput!): Message
+  deleteToken(where: TokenWhereUniqueInput!): Token
   upsertConferenceRoom(where: ConferenceRoomWhereUniqueInput!, create: ConferenceRoomCreateInput!, update: ConferenceRoomUpdateInput!): ConferenceRoom!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertMessage(where: MessageWhereUniqueInput!, create: MessageCreateInput!, update: MessageUpdateInput!): Message!
+  upsertToken(where: TokenWhereUniqueInput!, create: TokenCreateInput!, update: TokenUpdateInput!): Token!
   updateManyConferenceRooms(data: ConferenceRoomUpdateInput!, where: ConferenceRoomWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   updateManyMessages(data: MessageUpdateInput!, where: MessageWhereInput): BatchPayload!
+  updateManyTokens(data: TokenUpdateInput!, where: TokenWhereInput): BatchPayload!
   deleteManyConferenceRooms(where: ConferenceRoomWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyMessages(where: MessageWhereInput): BatchPayload!
+  deleteManyTokens(where: TokenWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -641,12 +651,15 @@ type Query {
   conferenceRooms(where: ConferenceRoomWhereInput, orderBy: ConferenceRoomOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ConferenceRoom]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message]!
+  tokens(where: TokenWhereInput, orderBy: TokenOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Token]!
   conferenceRoom(where: ConferenceRoomWhereUniqueInput!): ConferenceRoom
   user(where: UserWhereUniqueInput!): User
   message(where: MessageWhereUniqueInput!): Message
+  token(where: TokenWhereUniqueInput!): Token
   conferenceRoomsConnection(where: ConferenceRoomWhereInput, orderBy: ConferenceRoomOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ConferenceRoomConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   messagesConnection(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MessageConnection!
+  tokensConnection(where: TokenWhereInput, orderBy: TokenOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TokenConnection!
   """
   Fetches an object given its ID
   """
@@ -660,6 +673,225 @@ type Subscription {
   conferenceRoom(where: ConferenceRoomSubscriptionWhereInput): ConferenceRoomSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
+  token(where: TokenSubscriptionWhereInput): TokenSubscriptionPayload
+}
+
+type Token {
+  identity: ID!
+  token: ID
+}
+
+"""
+A connection to a list of items.
+"""
+type TokenConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [TokenEdge]!
+  aggregate: AggregateToken!
+}
+
+input TokenCreateInput {
+  identity: ID!
+  token: ID
+}
+
+"""
+An edge in a connection.
+"""
+type TokenEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Token!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum TokenOrderByInput {
+  identity_ASC
+  identity_DESC
+  token_ASC
+  token_DESC
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type TokenPreviousValues {
+  identity: ID!
+  token: ID
+}
+
+type TokenSubscriptionPayload {
+  mutation: MutationType!
+  node: Token
+  updatedFields: [String!]
+  previousValues: TokenPreviousValues
+}
+
+input TokenSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [TokenSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [TokenSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: TokenWhereInput
+}
+
+input TokenUpdateInput {
+  identity: ID
+  token: ID
+}
+
+input TokenWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [TokenWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [TokenWhereInput!]
+  identity: ID
+  """
+  All values that are not equal to given value.
+  """
+  identity_not: ID
+  """
+  All values that are contained in given list.
+  """
+  identity_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  identity_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  identity_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  identity_lte: ID
+  """
+  All values greater than the given value.
+  """
+  identity_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  identity_gte: ID
+  """
+  All values containing the given string.
+  """
+  identity_contains: ID
+  """
+  All values not containing the given string.
+  """
+  identity_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  identity_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  identity_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  identity_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  identity_not_ends_with: ID
+  token: ID
+  """
+  All values that are not equal to given value.
+  """
+  token_not: ID
+  """
+  All values that are contained in given list.
+  """
+  token_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  token_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  token_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  token_lte: ID
+  """
+  All values greater than the given value.
+  """
+  token_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  token_gte: ID
+  """
+  All values containing the given string.
+  """
+  token_contains: ID
+  """
+  All values not containing the given string.
+  """
+  token_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  token_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  token_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  token_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  token_not_ends_with: ID
+}
+
+input TokenWhereUniqueInput {
+  identity: ID
 }
 
 """
