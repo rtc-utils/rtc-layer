@@ -12,20 +12,22 @@ const { VideoGrant } = AccessToken;
 export default function RoomConnector() {
   return {
     Query: {
-      usersInConferenceRoom: async (
-        parent,
-        { conferenceRoomId },
-        context,
-        info
-      ) => {
-        const room = await context.db.query.conferenceRooms(
-          {
-            where: {
-              id: conferenceRoomId
-            }
-          },
-          info
-        );
+      conferenceRooms: async (parent, {}, context, info) => {
+        return await context.db.query.conferenceRooms({}, info)
+      },
+      conferenceRoom: async (parent, { conferenceRoomId }, context, info) => {
+        return await context.db.query.conferenceRooms({
+          where: {
+            id: conferenceRoomId
+          }
+        }, info)
+      },
+      usersInConferenceRoom: async (parent, { conferenceRoomId }, context, info) => {
+        const room = await context.db.query.conferenceRooms({
+          where: {
+            id: conferenceRoomId
+          }
+        }, info);
 
         return room.conferenceRooms.users;
       }

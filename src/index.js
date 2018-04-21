@@ -8,8 +8,6 @@ const Room = RoomConnector({});
 
 const resolvers = {
   Query: {
-    conferenceRooms(parent, args, ctx, info) {},
-    conferenceRoom(parent, args, ctx, info) {},
     messages(parent, { id }, ctx, info) {},
     ...User.Query,
     ...Room.Query
