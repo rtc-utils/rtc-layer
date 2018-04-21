@@ -2,6 +2,7 @@
 # import Message from "./generated/prisma.graphql"
 
 type Query {
+  usersInConferenceRoom(conferenceRoomId: ID!): [User]
   conferenceRooms: [ConferenceRoom]
   conferenceRoom(id: ID!): ConferenceRoom
   messages(conferenceRoomId: ID): [Message]

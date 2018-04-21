@@ -4,13 +4,24 @@ import {
   TWILIO_API_KEY,
   TWILIO_API_SECRET
 } from "../config";
+import twilioClient from "./twilioClient";
 
 const { AccessToken } = jwt;
 const { VideoGrant } = AccessToken;
 
 export default function TwilioConnector() {
   return {
-    Query: {},
+    Query: {
+      usersInConferenceRoom: async (parent, { conferenceRoomId }, context, info) => {
+        const room = await context.db.query.conferenceRooms({
+          where: {
+            id: conferenceRoomId
+          }
+        }, info);
+
+        return room.conferenceRooms.users;
+      }
+    },
     Mutation: {
       initializeConnectedUser: (parent, args, context, info) => {
         const userId = context && context.userId;
@@ -36,26 +47,39 @@ export default function TwilioConnector() {
           token: token.toJwt()
         };
       },
-      createConferenceRoom: async (parent, { title, users=[], messages=[] }, context, info) => {
+      createConferenceRoom: async (
+        parent,
+        { data: { title, users = [], messages = [] } },
+        context,
+        info
+      ) => {
         const userId = context && context.userId;
 
         if (!userId) {
           throw new Error("Must be logged in, to create conference rooms");
         }
 
-        const user = await context.db.query.user({ where: { id: userId }})
+        const user = await context.db.query.user({ where: { id: userId } });
 
         if (!user) throw new Error("Authenticated user was not found");
 
-        const conferenceRoom = await context.db.mutation.createConferenceRoom({
+        const connectIds = users.map(({ id }) => {
+          return { id };
+        });
+
+        return await context.db.mutation.createConferenceRoom({
           data: {
             title,
             messages: messages,
-            users: [user].concat(users),
+            users: {
+              connect: [
+                {
+                  id: user.id
+                }
+              ].concat(connectIds)
+            }
           }
-        })
-
-        return conferenceRoom
+        }, info);
       }
     }
   };
