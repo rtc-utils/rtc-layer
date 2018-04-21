@@ -1,5 +1,9 @@
-const { GraphQLServer } = require('graphql-yoga')
-const { Prisma } = require('prisma-binding')
+import TwilioConnector from './connectors/twilioConnector';
+
+const { GraphQLServer } = require("graphql-yoga");
+const { Prisma } = require("prisma-binding");
+
+const Twilio = TwilioConnector();
 
 const resolvers = {
   Query: {
@@ -8,24 +12,26 @@ const resolvers = {
     messages(parent, { id }, ctx, info) {},
     users(parent, args, ctx, info) {},
     user(parent, args, ctx, info) {},
+    ...Twilio.Query,
   },
   Mutation: {
-    addMessage(parent, args, ctx, info) {},
+    addMessage(parent, args, ctx, info) {}
+    ...Twilio.Mutation,
   }
-}
+};
 
 const server = new GraphQLServer({
-  typeDefs: './src/schema.graphql',
+  typeDefs: "./src/schema.graphql",
   resolvers,
   context: req => ({
     ...req,
     db: new Prisma({
-      typeDefs: 'src/generated/prisma.graphql',
-      endpoint: 'https://us1.prisma.sh/public-plumviper-393/rtc-layer/dev', // the endpoint of the Prisma DB service
-      secret: 'mysecret123', // specified in database/prisma.yml
-      debug: true, // log all GraphQL queryies & mutations
-    }),
-  }),
-})
+      typeDefs: "src/generated/prisma.graphql",
+      endpoint: "https://us1.prisma.sh/public-plumviper-393/rtc-layer/dev", // the endpoint of the Prisma DB service
+      secret: "mysecret123", // specified in database/prisma.yml
+      debug: true // log all GraphQL queryies & mutations
+    })
+  })
+});
 
-server.start(() => console.log('Server is running on http://localhost:4000'))
+server.start(() => console.log("Server is running on http://localhost:4000"));
