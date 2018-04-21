@@ -11,4 +11,5 @@ type Query {
 
 type Mutation {
   addMessage(text: String!, userId: ID!, chatroomId: ID!): Message
+  initializeConnectedUser: Token
 }

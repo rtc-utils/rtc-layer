@@ -17,3 +17,8 @@ type Message {
 	createdBy: User
 	createdAt: DateTime!
 }
+
+type Token {
+  identity: ID! @unique
+  token: ID
+}
