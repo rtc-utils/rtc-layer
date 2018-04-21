@@ -6,12 +6,10 @@ type Query {
   conferenceRooms: [ConferenceRoom]
   conferenceRoom(id: ID!): ConferenceRoom
   messages(conferenceRoomId: ID): [Message]
-  users(conferenceRoomId: ID): [User]
-  user(id: ID!, search: String): User
 }
 
 type Mutation {
-  addMessage(text: String!, userId: ID!, chatroomId: ID!): Message
+  addMessage(text: String!, conferenceRoomId: ID!): Message
   createUser(name: String!): User!
   initializeConnectedUser: Token
   createConferenceRoom(data: ConferenceRoomCreateInput!): ConferenceRoom!

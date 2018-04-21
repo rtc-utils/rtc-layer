@@ -9,20 +9,49 @@ import twilioClient from "./twilioClient";
 const { AccessToken } = jwt;
 const { VideoGrant } = AccessToken;
 
-export default function TwilioConnector() {
+export default function RoomConnector() {
   return {
     Query: {
-      usersInConferenceRoom: async (parent, { conferenceRoomId }, context, info) => {
-        const room = await context.db.query.conferenceRooms({
-          where: {
-            id: conferenceRoomId
-          }
-        }, info);
+      usersInConferenceRoom: async (
+        parent,
+        { conferenceRoomId },
+        context,
+        info
+      ) => {
+        const room = await context.db.query.conferenceRooms(
+          {
+            where: {
+              id: conferenceRoomId
+            }
+          },
+          info
+        );
 
         return room.conferenceRooms.users;
       }
     },
     Mutation: {
+      addMessage: async (parent, { text, conferenceRoomId }, context, info) => {
+        const userId = context && context.userId;
+
+        if (!userId) {
+          throw new Error("Must be logged in, to connect to conference rooms");
+        }
+
+        const userObject = await context.db.query.user({ where: { id: userId } });
+
+        const update = {
+          text,
+          conferenceRoomId,
+          createdBy: {
+            connect: {
+              id: userObject.id,
+            },
+          },
+        };
+
+        return context.db.mutation.createMessage({ data: update }, info);
+      },
       initializeConnectedUser: (parent, args, context, info) => {
         const userId = context && context.userId;
 
@@ -67,19 +96,22 @@ export default function TwilioConnector() {
           return { id };
         });
 
-        return await context.db.mutation.createConferenceRoom({
-          data: {
-            title,
-            messages: messages,
-            users: {
-              connect: [
-                {
-                  id: user.id
-                }
-              ].concat(connectIds)
+        return await context.db.mutation.createConferenceRoom(
+          {
+            data: {
+              title,
+              messages: messages,
+              users: {
+                connect: [
+                  {
+                    id: user.id
+                  }
+                ].concat(connectIds)
+              }
             }
-          }
-        }, info);
+          },
+          info
+        );
       }
     }
   };

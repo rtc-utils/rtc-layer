@@ -15,6 +15,7 @@ type ConferenceRoom implements Node {
 
 type Message implements Node {
   id: ID!
+  conferenceRoomId: ID!
   text: String
   createdBy(where: UserWhereInput): User
   createdAt: DateTime!
@@ -326,6 +327,7 @@ type MessageConnection {
 }
 
 input MessageCreateInput {
+  conferenceRoomId: ID!
   text: String
   createdBy: UserCreateOneInput
 }
@@ -352,6 +354,8 @@ type MessageEdge {
 enum MessageOrderByInput {
   id_ASC
   id_DESC
+  conferenceRoomId_ASC
+  conferenceRoomId_DESC
   text_ASC
   text_DESC
   createdAt_ASC
@@ -362,6 +366,7 @@ enum MessageOrderByInput {
 
 type MessagePreviousValues {
   id: ID!
+  conferenceRoomId: ID!
   text: String
   createdAt: DateTime!
 }
@@ -402,11 +407,13 @@ input MessageSubscriptionWhereInput {
 }
 
 input MessageUpdateDataInput {
+  conferenceRoomId: ID
   text: String
   createdBy: UserUpdateOneInput
 }
 
 input MessageUpdateInput {
+  conferenceRoomId: ID
   text: String
   createdBy: UserUpdateOneInput
 }
@@ -493,6 +500,59 @@ input MessageWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
+  conferenceRoomId: ID
+  """
+  All values that are not equal to given value.
+  """
+  conferenceRoomId_not: ID
+  """
+  All values that are contained in given list.
+  """
+  conferenceRoomId_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  conferenceRoomId_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  conferenceRoomId_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  conferenceRoomId_lte: ID
+  """
+  All values greater than the given value.
+  """
+  conferenceRoomId_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  conferenceRoomId_gte: ID
+  """
+  All values containing the given string.
+  """
+  conferenceRoomId_contains: ID
+  """
+  All values not containing the given string.
+  """
+  conferenceRoomId_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  conferenceRoomId_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  conferenceRoomId_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  conferenceRoomId_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  conferenceRoomId_not_ends_with: ID
   text: String
   """
   All values that are not equal to given value.
