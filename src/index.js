@@ -1,10 +1,10 @@
 import { GraphQLServer } from "graphql-yoga";
 import { Prisma } from "prisma-binding";
 import UserConnector from './connectors/userConnector';
-import TwilioConnector from "./connectors/twilioConnector";
+import RoomConnector from "./connectors/roomConnector";
 
 const User = UserConnector();
-const Twilio = TwilioConnector({});
+const Room = RoomConnector({});
 
 const resolvers = {
   Query: {
@@ -12,12 +12,12 @@ const resolvers = {
     conferenceRoom(parent, args, ctx, info) {},
     messages(parent, { id }, ctx, info) {},
     ...User.Query,
-    ...Twilio.Query
+    ...Room.Query
   },
   Mutation: {
     addMessage(parent, args, ctx, info) {},
     ...User.Mutation,
-    ...Twilio.Mutation
+    ...Room.Mutation
   }
 };
 

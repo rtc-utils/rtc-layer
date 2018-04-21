@@ -13,6 +13,7 @@ type User {
 
 type Message {
 	id: ID! @unique
+  conferenceRoomId: ID!
 	text: String
 	createdBy: User
 	createdAt: DateTime!
